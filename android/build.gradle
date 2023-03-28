@@ -72,8 +72,10 @@ dependencies {
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"
+  implementation "com.facebook.react:react-native:$version"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation 'com.paypal.checkout:android-sdk:0.8.8'
+    implementation 'com.google.code.gson:gson:2.9.1'
 }
 
 if (isNewArchitectureEnabled()) {
