@@ -8,6 +8,10 @@ RCT_EXTERN_METHOD(startSetPayPalPay:(NSString *)orderId withApprovalType:(NSStri
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
+}
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;
