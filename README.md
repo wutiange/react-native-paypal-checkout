@@ -29,6 +29,14 @@ yarn add @wutiange/react-native-paypal-checkout
 ```
 
 ## android 配置
+
+paypal 需要你开启备份，所以如果你的 app 需要将 `AndroidManifest.xml` 文件中修改下面的代码：
+```xml
+<application
+-       android:allowBackup="false"
++       android:allowBackup="true"
+```
+
 打开项目的 Application 类，在 onCreate 中添加下面的代码：
 ```java
 public void onCreate() {
