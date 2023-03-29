@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import PaypalCheckout, { PaypalCheckoutEventEmitter } from '../module';
+import PaypalCheckout, { PaypalCheckoutEventEmitterInstance } from '../module';
 import PayPal from '../PayPal';
 import type { OrderResponse } from '../types/OrderResponse';
 import type PayPalBody from '../types/PayPalBody';
@@ -24,7 +24,7 @@ export default class TokenQuickStart {
 
   private addListener() {
     if (Platform.OS === 'android') {
-      PaypalCheckoutEventEmitter?.addListener(
+      PaypalCheckoutEventEmitterInstance().addListener(
         'RNPaypalCheckout_Event',
         (data: any) => {
           if (data.code === 0) {
@@ -42,7 +42,9 @@ export default class TokenQuickStart {
 
   private removeListener() {
     if (Platform.OS === 'android') {
-      PaypalCheckoutEventEmitter?.removeAllListeners('RNPaypalCheckout_Event');
+      PaypalCheckoutEventEmitterInstance().removeAllListeners(
+        'RNPaypalCheckout_Event'
+      );
     }
   }
 

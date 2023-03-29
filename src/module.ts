@@ -16,6 +16,13 @@ const PaypalCheckout = NativeModules.ReactNativePaypalCheckout
         },
       }
     );
-export const PaypalCheckoutEventEmitter =
-  Platform.OS === 'android' ? new NativeEventEmitter(PaypalCheckout) : null;
+
+let eventEmitter: NativeEventEmitter | null = null;
+export const PaypalCheckoutEventEmitterInstance = () => {
+  if (eventEmitter === null) {
+    eventEmitter = new NativeEventEmitter(PaypalCheckout);
+  }
+  return eventEmitter;
+};
+
 export default PaypalCheckout;
