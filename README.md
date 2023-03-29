@@ -37,6 +37,16 @@ public void onCreate() {
   // 你的其他逻辑代码
 }
 ```
+
+如果是 kotlin ，那么这样：
+```kotlin
+public void onCreate() {
+  super.onCreate();
+  ReactNativePaypalCheckoutModule.init(this);
+  // 你的其他逻辑代码
+}
+```
+
 打开你项目的 build.gradle 文件，并在下面添加如下代码：
 ```groovy
 allprojects {
@@ -52,15 +62,6 @@ allprojects {
       }
     }
   }
-}
-```
-
-如果是 kotlin ，那么这样：
-```kotlin
-public void onCreate() {
-  super.onCreate();
-  ReactNativePaypalCheckoutModule.init(this);
-  // 你的其他逻辑代码
 }
 ```
 
