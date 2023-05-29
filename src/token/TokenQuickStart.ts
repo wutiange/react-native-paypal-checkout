@@ -137,7 +137,9 @@ export default class TokenQuickStart {
           orderAuthorizeUrl,
           orderPatchUrl,
           token
-        );
+        )
+          .then(resolve)
+          .catch(reject);
       } else if (Platform.OS === 'ios') {
         let approvalType = '';
         if (orderCaptureUrl) {
@@ -145,7 +147,9 @@ export default class TokenQuickStart {
         } else if (orderAuthorizeUrl) {
           approvalType = 'authorize';
         }
-        return PaypalCheckout.startSetPayPalPay(id, approvalType);
+        PaypalCheckout.startSetPayPalPay(id, approvalType)
+          .then(resolve)
+          .catch(reject);
       } else {
         reject(new Error('Platform is not supported'));
       }

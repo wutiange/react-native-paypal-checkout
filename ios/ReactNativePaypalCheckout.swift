@@ -34,8 +34,12 @@ class ReactNativePaypalCheckout: NSObject {
                 approval.actions.capture { response,error  in
                     if((error) != nil){
                         reject("approvalError", "approvalError", error);
-                    } else{
-                        resolve(response);
+                    } else {
+                        let dict: NSDictionary = [
+                            "id": response?.data.id ?? "",
+                            "status": response?.data.status ?? ""
+                        ]
+                        resolve(dict);
                     }
                 }
             } else if (approvalType == "authorize") {
@@ -43,7 +47,11 @@ class ReactNativePaypalCheckout: NSObject {
                     if((error) != nil){
                         reject("approvalError", "approvalError", error);
                     } else{
-                        resolve(response);
+                        let dict: NSDictionary = [
+                            "id": response?.data.id ?? "",
+                            "status": response?.data.status ?? ""
+                        ]
+                        resolve(dict);
                     }
                 }
             }
