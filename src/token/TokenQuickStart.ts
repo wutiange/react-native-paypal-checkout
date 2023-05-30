@@ -25,7 +25,7 @@ export default class TokenQuickStart {
   private addListener() {
     if (Platform.OS === 'android') {
       PaypalCheckoutEventEmitterInstance().addListener(
-        'RNPaypalCheckout_Event',
+        'ReactNativePaypalCheckout_Event',
         (data: any) => {
           if (data.code === 0) {
             this.promise.resolve?.(JSON.parse(data.message));
@@ -43,7 +43,7 @@ export default class TokenQuickStart {
   private removeListener() {
     if (Platform.OS === 'android') {
       PaypalCheckoutEventEmitterInstance().removeAllListeners(
-        'RNPaypalCheckout_Event'
+        'ReactNativePaypalCheckout_Event'
       );
     }
   }
@@ -137,9 +137,7 @@ export default class TokenQuickStart {
           orderAuthorizeUrl,
           orderPatchUrl,
           token
-        )
-          .then(resolve)
-          .catch(reject);
+        );
       } else if (Platform.OS === 'ios') {
         let approvalType = '';
         if (orderCaptureUrl) {
