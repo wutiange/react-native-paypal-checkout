@@ -22,6 +22,9 @@ npm 的方式：
 ```sh
 npm install @wutiange/react-native-paypal-checkout
 如果你的 react-native 的版本低于 0.71.0 ，那么就请下载 0.1.0 以下的版本，比如 0.0.2;否则请下载高版本。
+主要是下面的区别，所以下载不同，你也可以下载最新版本，然后手动将下面的地方手动改一下来解决
+// For < 0.71, this will be from the local maven repo，也就是`com.facebook.react:react-android:+`
+// For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
 ```
 yarn 的方式：
 ```sh
