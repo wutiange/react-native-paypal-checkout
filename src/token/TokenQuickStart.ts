@@ -120,15 +120,15 @@ export default class TokenQuickStart {
       const orderCaptureUrl =
         tokenInstance.orderResponse?.links.find(
           (link) => link.rel === 'capture'
-        )?.href || null;
+        )?.href ?? null;
       const orderAuthorizeUrl =
         tokenInstance.orderResponse?.links.find(
           (link) => link.rel === 'authorize'
-        )?.href || null;
+        )?.href ?? null;
       const orderPatchUrl =
         tokenInstance.orderResponse?.links.find((link) => link.rel === 'update')
-          ?.href || null;
-      const id = tokenInstance.orderResponse?.id || null;
+          ?.href ?? null;
+      const id = tokenInstance.orderResponse?.id ?? null;
       this.addListener();
       if (Platform.OS === 'android') {
         PaypalCheckout.startSetPayPalPay(

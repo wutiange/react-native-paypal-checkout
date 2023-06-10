@@ -14,7 +14,7 @@ paypal checkout sdk
 4. 如果没有应用，新建应用，除了 App Name 外，其他的默认， **如果你们业务不同，请按照你们的业务进行选择，我这里只是介绍能正常测试通过的方式**。
 5. 新建成功以后就可以看到 `Client ID` 了，复制下来， `Client ID` 的下面就是 `Secret` ，点击 Show 即可查看，也复制下来；
 6. 滑到下面有一个 `Log in with PayPal` ， 勾选这个，然后点击 `Advance Options` 展开配置项，按需配置即可，然后保存；
-7. 还有一项是 `Return URL` 这个在 `Log in with PayPal` 的上面，点击 `Show` ，把 `nativexo://paypalpay` 里面的 `nativexo` 替换成你的 android 包名，点击 + 号；
+7. 还有一项是 `Return URL` 这个在 `Log in with PayPal` 的上面，点击 `Show` ，把 `nativexo://paypalpay` 里面的 `nativexo` 替换成你的 android 包名，点击 + 号；注意这里，如果你的 `scheme` 和包名相同，那么会出现报错，就是有可能跳转过后不出现支付界面的情况。
 
 ## Installation
 
@@ -37,8 +37,15 @@ paypal 需要你开启备份，所以如果你的 app 需要将 `AndroidManifest
 ```xml
 <application
 -       android:allowBackup="false"
-+       android:allowBackup="true"
++       android:allowBackup="true">
 ```
+
+个别手机在登录完成回调的时候可能存在问题，需要修改下面代码，也是在 `AndroidManifest.xml` 文件中， 找到承载 react-native 的Activity ：
+```xml
+<activity
++  android:launchMode="singleTask">
+```
+目前测试如果这里的这个值是： `singleInstance` ，那么就有手机在跳转的时候出现问题；但是只要登录成功过就不会有问题。
 
 打开项目的 Application 类，在 onCreate 中添加下面的代码：
 ```java
