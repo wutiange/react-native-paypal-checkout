@@ -1,6 +1,6 @@
 {
   "name": "@wutiange/react-native-paypal-checkout",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

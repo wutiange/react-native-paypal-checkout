@@ -5,11 +5,9 @@ import { envStrToUrl } from './utils';
 export default class PayPal {
   static baseUrl: string | null = null;
   private static clientId?: string;
-  private static secret?: string;
 
-  static setClientIdAndSecret(clientId: string, secret: string) {
+  static setClientIdAndSecret(clientId: string) {
     this.clientId = clientId;
-    this.secret = secret;
   }
 
   static setBaseUrl(url: string) {
@@ -23,19 +21,18 @@ export default class PayPal {
   }
 
   static getClientIdAndSecret() {
-    if (!this.clientId || !this.secret) {
+    if (!this.clientId) {
       throw new Error('clientId or secret is not set');
     }
     return {
       clientId: this.clientId,
-      secret: this.secret,
     };
   }
 
   static config(cfg: PayPalConfig) {
-    cfg.loggingEnabled = cfg.loggingEnabled || false;
-    cfg.shouldFailEligibility = cfg.shouldFailEligibility || false;
-    this.setClientIdAndSecret(cfg.clientId, cfg.secret || '');
+    cfg.loggingEnabled = cfg.loggingEnabled ?? false;
+    cfg.shouldFailEligibility = cfg.shouldFailEligibility ?? false;
+    this.setClientIdAndSecret(cfg.clientId);
     PayPal.setBaseUrl(envStrToUrl(cfg.environment));
     PaypalCheckout.config(cfg);
   }

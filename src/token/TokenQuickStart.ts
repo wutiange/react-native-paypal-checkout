@@ -57,8 +57,8 @@ export default class TokenQuickStart {
 
   private getAuthorization() {
     // 得到 client_id 和 client_secret
-    const { clientId, secret } = PayPal.getClientIdAndSecret();
-    const usernameAndPassword = `${clientId}:${secret}`;
+    const { clientId } = PayPal.getClientIdAndSecret();
+    const usernameAndPassword = `${clientId}:`;
     const encoded = this.encodeAndBase64(usernameAndPassword, 'latin1');
     return `Basic ${encoded}`;
   }
