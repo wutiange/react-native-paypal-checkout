@@ -1,6 +1,6 @@
 {
   "name": "@wutiange/react-native-paypal-checkout",
-  "version": "0.0.6",
+  "version": "1.0.0-alpha.1",
   "description": "基于 paypal checkout sdk 的 react-native 封装",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
