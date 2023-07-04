@@ -1,14 +1,11 @@
+import type { PayPalConfig } from '.';
 import PaypalCheckout from './module';
-import type PayPalConfig from './types/PayPalConfig';
 import { envStrToUrl } from './utils';
+import data from './data.json';
 
 class PayPal {
   static baseUrl: string | null = null;
-  private static clientId?: string;
-
-  static setClientId(clientId: string) {
-    this.clientId = clientId;
-  }
+  private static accountType?: string;
 
   static setBaseUrl(url: string) {
     PayPal.baseUrl = url;
@@ -20,17 +17,23 @@ class PayPal {
     }
   }
 
-  static getClientId() {
-    if (!this.clientId) {
-      throw new Error('clientId is not set');
+  static getAccountType() {
+    if (!PayPal.accountType) {
+      throw new Error('accountType is not set');
     }
-    return this.clientId;
+    return PayPal.accountType;
   }
 
   static config(cfg: PayPalConfig) {
+    cfg.clientId = (data as Record<string, string>)[
+      `${cfg.accountType}$$clientId`
+    ];
+    if (!cfg.clientId) {
+      throw new Error('clientId is not set');
+    }
     cfg.loggingEnabled = cfg.loggingEnabled ?? false;
     cfg.shouldFailEligibility = cfg.shouldFailEligibility ?? false;
-    this.setClientId(cfg.clientId);
+    PayPal.accountType = cfg.accountType;
     PayPal.setBaseUrl(envStrToUrl(cfg.environment));
     PaypalCheckout.config(cfg);
   }

@@ -415,11 +415,9 @@ PODS:
     - React-logger (= 0.71.4)
     - React-perflogger (= 0.71.4)
   - SocketRocket (0.6.0)
-  - SwiftyJSON (4.3.0)
-  - wutiange-react-native-paypal-checkout (0.0.2):
+  - wutiange-react-native-paypal-checkout (0.0.6):
     - PayPalCheckout (~> 0.101.0)
     - React-Core
-    - SwiftyJSON (~> 4.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -503,7 +501,6 @@ SPEC REPOS:
     - OpenSSL-Universal
     - PayPalCheckout
     - SocketRocket
-    - SwiftyJSON
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -627,8 +624,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 8fa50b38df6b992c76537993a2b0553d3b088004
   ReactCommon: b49a4b00ca6d181ff74b17c12b2d59ac4add0bde
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
-  wutiange-react-native-paypal-checkout: 4ae127ceefabd82efbd9de90871e910eaf88946f
+  wutiange-react-native-paypal-checkout: ed7475daae859d15873b58b8b642dc9a238ae409
   Yoga: 79dd7410de6f8ad73a77c868d3d368843f0c93e0
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

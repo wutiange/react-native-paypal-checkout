@@ -26,6 +26,9 @@
     "!**/__mocks__",
     "!**/.*"
   ],
+  "bin": {
+    "wutiange-paypal-checkout": "./scripts/generate.js"
+  },
   "scripts": {
     "test": "jest",
     "typecheck": "tsc --noEmit",

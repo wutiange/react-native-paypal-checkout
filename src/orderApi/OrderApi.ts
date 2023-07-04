@@ -1,4 +1,4 @@
-import type { OrderResponse } from 'src/types/OrderResponse';
+import type { OrderDao } from '../';
 import { PayPal } from '../PayPal';
 
 class OrderApi {
@@ -12,7 +12,7 @@ class OrderApi {
   // 检查请求是否已经过期
   private checkExpired(key: string) {
     const [_, expiration] = this.cacheRequest[key] ?? [];
-    return !!(expiration && expiration < Date.now());
+    return !(expiration && expiration >= Date.now());
   }
 
   async oauth2Token(
@@ -50,7 +50,7 @@ class OrderApi {
     token: string,
     body: string,
     headers?: Record<string, string>
-  ): Promise<OrderResponse> {
+  ): Promise<OrderDao> {
     const key = `${body}/${token}`;
     if (!this.checkExpired(key)) {
       return this.cacheRequest[key]?.[0] ?? '';
@@ -79,21 +79,32 @@ class OrderApi {
     token: string,
     orderId: string,
     headers?: Record<string, string>
-  ): Promise<OrderResponse> {
+  ): Promise<OrderDao> {
     const key = `${orderId}/${token}`;
     if (!this.checkExpired(key)) {
       return this.cacheRequest[key]?.[0] ?? '';
     }
-    const response = fetch(`${PayPal.baseUrl}/v2/checkout/orders/${orderId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-    }).then((res) => res.json());
+    const response: OrderDao = await fetch(
+      `${PayPal.baseUrl}/v2/checkout/orders/${orderId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+      }
+    ).then((res) => res.json());
+    if (!(response.status && response.id) && response.message) {
+      throw new Error(response.message);
+    }
+    console.log('queryOrder-----=======', response);
     this.cacheRequest[key] = [response, Date.now() + this.expiration];
     return response;
+  }
+
+  clearCache() {
+    this.cacheRequest = {};
   }
 }
 

@@ -1,16 +1,14 @@
-export default interface PayPalBody {
+interface OrderEntity {
   application_context: ApplicationContext;
   intent: OrderIntent;
   purchase_units: PurchaseUnits[];
 }
 
-export interface ApplicationContext {
+interface ApplicationContext {
   user_action: UserAction;
 }
 
-export type OrderIntent = 'AUTHORIZE' | 'CAPTURE';
-
-export interface PurchaseUnits {
+interface PurchaseUnits {
   reference_id?: string;
   invoice_id?: string;
   custom_id?: string;
@@ -22,14 +20,14 @@ export interface PurchaseUnits {
   amount?: UnitAmount;
 }
 
-export type UserAction = 'PAY_NOW' | 'CONTINUE';
+type UserAction = 'PAY_NOW' | 'CONTINUE';
 
-export interface UnitAmount {
+interface UnitAmount {
   currency_code: CurrencyCode;
   value: string;
 }
 
-export type CurrencyCode =
+type CurrencyCode =
   | 'AUD'
   | 'BRL'
   | 'CAD'
@@ -57,4 +55,14 @@ export type CurrencyCode =
   | 'THB'
   | 'USD';
 
-export type Environment = 'SANDBOX' | 'LIVE' | 'STAGE' | 'LOCAL' | string;
+type Environment = 'SANDBOX' | 'LIVE' | 'STAGE' | 'LOCAL' | string;
+
+export {
+  OrderEntity,
+  ApplicationContext,
+  PurchaseUnits,
+  UserAction,
+  UnitAmount,
+  CurrencyCode,
+  Environment,
+};

@@ -1,10 +1,9 @@
 import { Platform } from 'react-native';
 import PaypalCheckout, { PaypalCheckoutEventEmitterInstance } from '../module';
 import { PayPal } from '../PayPal';
-import type { OrderResponse } from '../types/OrderResponse';
-import type PayPalBody from '../types/PayPalBody';
-import { createAuthorization } from 'src/utils';
-import { orderApi } from 'src/orderApi/OrderApi';
+import { orderApi } from '../orderApi/OrderApi';
+import type { OrderDao, OrderEntity } from '../';
+import { getAuthorization } from '../utils';
 
 class TokenQuickStart {
   private static instance: TokenQuickStart | null = null;
@@ -40,6 +39,7 @@ class TokenQuickStart {
   }
 
   static getInstance() {
+    console.log('TokenQuickStart---------getInstance----');
     if (!this.instance) {
       this.instance = new TokenQuickStart();
     }
@@ -48,12 +48,12 @@ class TokenQuickStart {
 
   private async getPaypalToken() {
     PayPal.checkBaseUrl();
-    const authorization = createAuthorization(PayPal.getClientId());
+    const authorization = getAuthorization(PayPal.getAccountType());
     return orderApi.oauth2Token(authorization);
   }
 
   async createPaypalOrder(
-    paypalBody: PayPalBody,
+    paypalBody: OrderEntity,
     headers?: Record<string, string>
   ) {
     PayPal.checkBaseUrl();
@@ -68,7 +68,7 @@ class TokenQuickStart {
     return orderApi.createOrder(token, body, headers);
   }
 
-  private initiateNativePayment(orderDetail: OrderResponse, token: string) {
+  private initiateNativePayment(orderDetail: OrderDao, token: string) {
     const tempLinks = orderDetail?.links ?? [];
     // 从 orderResponse.links 中获取相关链接
     let orderCaptureUrl: string | null = null;
@@ -78,13 +78,13 @@ class TokenQuickStart {
     for (const link of tempLinks) {
       switch (link?.rel) {
         case 'capture':
-          orderCaptureUrl = link.href;
+          orderCaptureUrl = link.href ?? null;
           break;
         case 'authorize':
-          orderAuthorizeUrl = link.href;
+          orderAuthorizeUrl = link.href ?? null;
           break;
         case 'update':
-          orderPatchUrl = link.href;
+          orderPatchUrl = link.href ?? null;
           break;
       }
     }
@@ -129,7 +129,8 @@ class TokenQuickStart {
         })
         .then(([orderDetail, token]) => {
           return this.initiateNativePayment(orderDetail, token);
-        });
+        })
+        .catch(reject);
     });
   }
 }

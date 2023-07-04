@@ -1,7 +1,8 @@
-import type { CurrencyCode, Environment, UserAction } from './PayPalBody';
+import type { CurrencyCode, Environment, UserAction } from './OrderEntity';
 
-export default interface PayPalConfig {
-  clientId: string;
+interface PayPalConfig {
+  clientId?: string;
+  accountType: string;
   environment: Environment;
   currencyCode?: CurrencyCode;
   userAction?: UserAction;
@@ -10,3 +11,5 @@ export default interface PayPalConfig {
   stageUrl?: string;
   port?: string;
 }
+
+export { PayPalConfig };
