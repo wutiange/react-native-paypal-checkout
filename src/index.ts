@@ -1,6 +1,8 @@
-import PayPal from './PayPal';
-import TokenQuickStart from './token/TokenQuickStart';
+import { PayPal } from './PayPal';
 
-export const tokenQuickStart = TokenQuickStart.getInstance();
+export { tokenQuickStart } from './token/TokenQuickStart';
 
-export default PayPal;
+const Paypal = {
+  config: PayPal.config,
+};
+export default Paypal;

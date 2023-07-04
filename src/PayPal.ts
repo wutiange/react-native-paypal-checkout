@@ -2,11 +2,11 @@ import PaypalCheckout from './module';
 import type PayPalConfig from './types/PayPalConfig';
 import { envStrToUrl } from './utils';
 
-export default class PayPal {
+class PayPal {
   static baseUrl: string | null = null;
   private static clientId?: string;
 
-  static setClientIdAndSecret(clientId: string) {
+  static setClientId(clientId: string) {
     this.clientId = clientId;
   }
 
@@ -20,20 +20,20 @@ export default class PayPal {
     }
   }
 
-  static getClientIdAndSecret() {
+  static getClientId() {
     if (!this.clientId) {
-      throw new Error('clientId or secret is not set');
+      throw new Error('clientId is not set');
     }
-    return {
-      clientId: this.clientId,
-    };
+    return this.clientId;
   }
 
   static config(cfg: PayPalConfig) {
     cfg.loggingEnabled = cfg.loggingEnabled ?? false;
     cfg.shouldFailEligibility = cfg.shouldFailEligibility ?? false;
-    this.setClientIdAndSecret(cfg.clientId);
+    this.setClientId(cfg.clientId);
     PayPal.setBaseUrl(envStrToUrl(cfg.environment));
     PaypalCheckout.config(cfg);
   }
 }
+
+export { PayPal };

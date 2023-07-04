@@ -1,26 +1,17 @@
 import { Platform } from 'react-native';
 import PaypalCheckout, { PaypalCheckoutEventEmitterInstance } from '../module';
-import PayPal from '../PayPal';
+import { PayPal } from '../PayPal';
 import type { OrderResponse } from '../types/OrderResponse';
 import type PayPalBody from '../types/PayPalBody';
-import { Buffer } from 'buffer';
+import { createAuthorization } from 'src/utils';
+import { orderApi } from 'src/orderApi/OrderApi';
 
-export default class TokenQuickStart {
+class TokenQuickStart {
   private static instance: TokenQuickStart | null = null;
-  private token: string | null = null;
-  private orderResponse: OrderResponse | null = null;
   private promise: { resolve: any; reject: any } = {
     resolve: null,
     reject: null,
   };
-
-  // 检查 token 是否已经设置，没有设置则抛出错误
-  private checkTokenAndReturn() {
-    if (!this.token) {
-      throw new Error('token is not set');
-    }
-    return this.token;
-  }
 
   private addListener() {
     if (Platform.OS === 'android') {
@@ -55,102 +46,93 @@ export default class TokenQuickStart {
     return this.instance;
   }
 
-  private getAuthorization() {
-    // 得到 client_id 和 client_secret
-    const { clientId } = PayPal.getClientIdAndSecret();
-    const usernameAndPassword = `${clientId}:`;
-    const encoded = this.encodeAndBase64(usernameAndPassword, 'latin1');
-    return `Basic ${encoded}`;
-  }
-
-  // 对字符串进行 encode 和 base64，需要指定编码方式
-  private encodeAndBase64(str: string, encoding: BufferEncoding) {
-    return Buffer.from(str, encoding).toString('base64');
-  }
-
   private async getPaypalToken() {
     PayPal.checkBaseUrl();
-    const Authorization = this.getAuthorization();
-    this.token = await fetch(
-      `${PayPal.baseUrl}/v1/oauth2/token?grant_type=client_credentials`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((text) => text.access_token);
+    const authorization = createAuthorization(PayPal.getClientId());
+    return orderApi.oauth2Token(authorization);
   }
 
-  async getOrderResponse(paypalBody: PayPalBody) {
+  async createPaypalOrder(
+    paypalBody: PayPalBody,
+    headers?: Record<string, string>
+  ) {
     PayPal.checkBaseUrl();
     // 获取 token ，这里每次都拿新的 token
-    await this.getPaypalToken();
-    // 检查 token 是否成功拿取
-    const token = this.checkTokenAndReturn();
+    const token = await this.getPaypalToken();
     // 组装 body
     const body = JSON.stringify({
       intent: paypalBody.intent,
       application_context: paypalBody.application_context,
       purchase_units: paypalBody.purchase_units,
     });
-    this.orderResponse = await fetch(`${PayPal.baseUrl}/v2/checkout/orders`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body,
-    }).then((res) => res.json());
-    return this.orderResponse;
+    return orderApi.createOrder(token, body, headers);
   }
 
-  startPaypalCheckout() {
+  private initiateNativePayment(orderDetail: OrderResponse, token: string) {
+    const tempLinks = orderDetail?.links ?? [];
+    // 从 orderResponse.links 中获取相关链接
+    let orderCaptureUrl: string | null = null;
+    let orderAuthorizeUrl: string | null = null;
+    let orderPatchUrl: string | null = null;
+    const id = orderDetail?.id ?? null;
+    for (const link of tempLinks) {
+      switch (link?.rel) {
+        case 'capture':
+          orderCaptureUrl = link.href;
+          break;
+        case 'authorize':
+          orderAuthorizeUrl = link.href;
+          break;
+        case 'update':
+          orderPatchUrl = link.href;
+          break;
+      }
+    }
+    if (Platform.OS === 'android') {
+      this.addListener();
+      PaypalCheckout.startSetPayPalPay(
+        id,
+        orderCaptureUrl,
+        orderAuthorizeUrl,
+        orderPatchUrl,
+        token
+      );
+    } else if (Platform.OS === 'ios') {
+      let approvalType = '';
+      if (orderCaptureUrl) {
+        approvalType = 'capture';
+      } else if (orderAuthorizeUrl) {
+        approvalType = 'authorize';
+      }
+      return PaypalCheckout.startSetPayPalPay(id, approvalType);
+    } else {
+      throw Error('Platform is not supported');
+    }
+  }
+
+  startPaypalCheckout(
+    orderId: string,
+    headers?: Record<string, string>
+  ): Promise<{ orderId: string; status: string }> {
     return new Promise((resolve, reject) => {
       if (Platform.OS === 'android') {
         this.promise.resolve = resolve;
         this.promise.reject = reject;
       }
-      // 获取 TokenQuickStart 实例
-      const tokenInstance = TokenQuickStart.getInstance();
-      // 检查 token 是否成功拿取
-      const token = tokenInstance.checkTokenAndReturn();
-      const orderCaptureUrl =
-        tokenInstance.orderResponse?.links.find(
-          (link) => link.rel === 'capture'
-        )?.href ?? null;
-      const orderAuthorizeUrl =
-        tokenInstance.orderResponse?.links.find(
-          (link) => link.rel === 'authorize'
-        )?.href ?? null;
-      const orderPatchUrl =
-        tokenInstance.orderResponse?.links.find((link) => link.rel === 'update')
-          ?.href ?? null;
-      const id = tokenInstance.orderResponse?.id ?? null;
-      this.addListener();
-      if (Platform.OS === 'android') {
-        PaypalCheckout.startSetPayPalPay(
-          id,
-          orderCaptureUrl,
-          orderAuthorizeUrl,
-          orderPatchUrl,
-          token
-        );
-      } else if (Platform.OS === 'ios') {
-        let approvalType = '';
-        if (orderCaptureUrl) {
-          approvalType = 'capture';
-        } else if (orderAuthorizeUrl) {
-          approvalType = 'authorize';
-        }
-        PaypalCheckout.startSetPayPalPay(id, approvalType)
-          .then(resolve)
-          .catch(reject);
-      } else {
-        reject(new Error('Platform is not supported'));
-      }
+      // 获取 token ，这里每次都拿新的 token
+      this.getPaypalToken()
+        .then((token) => {
+          return Promise.all([
+            orderApi.queryOrder(token, orderId, headers),
+            token,
+          ]);
+        })
+        .then(([orderDetail, token]) => {
+          return this.initiateNativePayment(orderDetail, token);
+        });
     });
   }
 }
+
+const tokenQuickStart = TokenQuickStart.getInstance();
+export { tokenQuickStart };
