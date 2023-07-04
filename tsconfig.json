@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@wutiange/react-native-paypal-checkout": ["./src/index"]
+      "@wutiange/react-native-paypal-checkout": ["./src/index"],
+      "@/*": ["./*"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
