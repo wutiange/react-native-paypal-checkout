@@ -88,43 +88,52 @@ ios 不需要任何配置， pod 会自动做好一切。
 
 ## Usage
 
-
+在使用前需要先使用clientId和secret生成数据，所以现在项目里执行：
+```bash
+npx wutiange-paypal-checkout  "{                                                                                           17:13:36
+  \"xiao\": {
+    \"clientId\": \"你的 clientId\",
+    \"secret\": \"你的 secret\"
+  },
+  \"da\": {
+    \"clientId\": \"你的另一个 clientId\",
+    \"secret\": \"你的另一个 secret\"
+  }
+ }"
+```
+然后才进行下面的操作。下面 `config` 中的 `accountType` 的值就是上面的 `key` ，比如 `xiao` 和 `da` 。
 ```js
-import PayPal, { tokenQuickStart } from '@wutiange/react-native-paypal-checkout';
+import Paypal, {
+  tokenQuickStart,
+} from '@wutiange/react-native-paypal-checkout';
 
 // ...
 // 先配置
-PayPal.config({
-  clientId:
-    '你的 clientId',
-  secret:
-    '你的 secret',
-  environment: 'SANDBOX',
-});
-// 再获取订单 id
-tokenQuickStart.getOrderResponse({
-  application_context: {
-    user_action: 'PAY_NOW',
-  },
-  intent: 'CAPTURE',
-  purchase_units: [
-    {
-      amount: {
-        currency_code: 'USD',
-        value: '0.5',
-      },
-    },
-  ],
-});
-// 再发起支付
-tokenQuickStart
-  .startPaypalCheckout()
-  .then((res: any) => {
-    console.log('res', res, res.status);
-  })
-  .catch((err: any) => {
-    console.log('err', err);
+try {
+  Paypal.config({
+    accountType: 'xiao',
+    environment: 'SANDBOX',
   });
+  const orderDetail = await tokenQuickStart.createPaypalOrder({
+    application_context: {
+      user_action: 'PAY_NOW',
+    },
+    intent: 'CAPTURE',
+    purchase_units: [
+      {
+        amount: {
+          currency_code: 'USD',
+          value: '0.5',
+        },
+      },
+    ],
+  });
+  const payResult = await tokenQuickStart.startPaypalCheckout(
+    orderDetail.id
+  );
+} catch (error) {
+  console.warn('error-------11111----', error);
+}
 ```
 
 ## Contributing
