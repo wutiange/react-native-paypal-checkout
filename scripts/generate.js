@@ -52,10 +52,4 @@ function createEncoded() {
   whiteDataFileContent(JSON.stringify(obj, null, 2));
 }
 
-/**
- * clientId:
-                'AXRqEAs6zVzF7u5Pd9ldBtZwL8VSYogHqBeXvzLdmcVFm5yPZzjIyRC7gQwTVxglLxk1t-TEVzBFw8Z3',
-              secret:
-                'EO4fO8gAeI21UZkITvK-ideME_kqgRAHazmOa_nctbBrlLotqXAIiRagtEKf1KoHVeOCPsjOJCKW1Q0E',
- */
 createEncoded();

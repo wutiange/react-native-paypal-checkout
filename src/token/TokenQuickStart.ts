@@ -68,7 +68,7 @@ class TokenQuickStart {
     return orderApi.createOrder(token, body, headers);
   }
 
-  private initiateNativePayment(orderDetail: OrderDao, token: string) {
+  private async initiateNativePayment(orderDetail: OrderDao, token: string) {
     const tempLinks = orderDetail?.links ?? [];
     // 从 orderResponse.links 中获取相关链接
     let orderCaptureUrl: string | null = null;
@@ -130,6 +130,7 @@ class TokenQuickStart {
         .then(([orderDetail, token]) => {
           return this.initiateNativePayment(orderDetail, token);
         })
+        .then(resolve)
         .catch(reject);
     });
   }
