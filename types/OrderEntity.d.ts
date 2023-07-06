@@ -1,3 +1,5 @@
+import type { OrderIntent } from './OrderDao';
+
 interface OrderEntity {
   application_context: ApplicationContext;
   intent: OrderIntent;

@@ -11,9 +11,9 @@ export type {
   UnitAmount,
   CurrencyCode,
   Environment,
-} from '../types/OrderEntity';
+} from '@/types/OrderEntity';
 
-export type { PayPalConfig } from '../types/PaypalConfig';
+export type { PayPalConfig } from '@/types/PaypalConfig';
 
 export type {
   OrderDao,
@@ -26,7 +26,7 @@ export type {
   OrderProcessingInstruction,
   OrderIntent,
   OrderStatus,
-} from '../types/OrderDao';
+} from '@/types/OrderDao';
 
 const Paypal = {
   config: PayPal.config,

@@ -3,6 +3,7 @@
 
 // 通过这个脚本，可以生成 clientId 和 secret 的数据，这样就可以不暴露相关值到网络上
 const fs = require('fs');
+const path = require('path');
 const Buffer = require('buffer').Buffer;
 
 function encodeAndBase64(str, encoding) {
@@ -17,7 +18,7 @@ function createAuthorization({ clientId, secret }) {
 
 // 将生成的 encoded 值写入到 data.js 文件中
 function whiteDataFileContent(data) {
-  const filePath = './src/data.json';
+  const filePath = path.join(__dirname, '/../src/data.json');
   fs.writeFileSync(filePath, data, 'utf-8');
 }
 
